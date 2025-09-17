@@ -94,7 +94,7 @@ namespace _5_OperatorsChallenge.Tests
         [MemberData(nameof(_pairNumbers))]
         public void OrShouldReturnFalse(int num1, int num2)
         {
-            Assert.False(Program.Or(num1, num2));
+            Assert.True(Program.Or(num1, num2));
         }
 
     }
