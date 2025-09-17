@@ -8,6 +8,8 @@ namespace _6_FlowControl
 {
     public class Program
     {
+        static string globalUsername;
+        static string globalPassword;
         static void Main(string[] args)
         {
         }
@@ -19,7 +21,25 @@ namespace _6_FlowControl
         /// <returns></returns>
         public static int GetValidTemperature()
         {
-            
+            int temp;
+            bool isValidTemp = false;
+
+            do
+            {
+                Console.Write("Please enter a temperature between -40 and 135: ");
+                string userInput = Console.ReadLine();
+
+                if (int.TryParse(userInput, out temp) && temp >= -40 && temp <= 135)
+                {
+                    isValidTemp = true; // Valid temperature entered
+                }
+                else
+                {
+                    Console.WriteLine("Invalid input. Try again.");
+                }
+            } while (!isValidTemp);
+
+            return temp;
         }
 
         /// <summary>
@@ -67,7 +87,13 @@ namespace _6_FlowControl
         /// </summary>
         public static void Register()
         {
-            throw new NotImplementedException($"Register() has not been implemented.");
+            Console.WriteLine("Please enter a username:");
+            globalUsername = Console.ReadLine();
+
+            Console.WriteLine("Please enter a password:");
+            globalPassword = Console.ReadLine();
+
+            Console.WriteLine("User credentials saved.");
         }
 
         /// <summary>
@@ -80,7 +106,26 @@ namespace _6_FlowControl
         /// <returns></returns>
         public static bool Login()
         {
-            throw new NotImplementedException($"Login() has not been implemented.");
+            string username;
+            string password;
+
+            do
+            {
+                Console.WriteLine("Please enter your username:");
+                username = Console.ReadLine();
+
+                Console.WriteLine("Please enter your password:");
+                password = Console.ReadLine();
+
+                if (username == globalUsername && password == globalPassword)
+                {
+                    return true; // Successful login
+                }
+                else
+                {
+                    Console.WriteLine("Incorrect username or password. Please try again.");
+                }
+            } while (true);
         }
 
         /// <summary>
