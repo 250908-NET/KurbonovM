@@ -11,7 +11,7 @@ public class AuthController : ControllerBase
 {
     private readonly UserManager<AppUser> _userManager;
     private readonly SignInManager<AppUser> _signInManager;
-    private readonly JwtSettings _jwtSettings;
+    private readonly JwtSettings? _jwtSettings;
 
     public AuthController(
         UserManager<AppUser> userManager,
@@ -21,6 +21,10 @@ public class AuthController : ControllerBase
         _userManager = userManager;
         _signInManager = signInManager;
         _jwtSettings = configuration.GetSection("JwtSettings").Get<JwtSettings>();
+         if (_jwtSettings == null)
+    {
+        throw new InvalidOperationException("JwtSettings configuration is missing.");
+    }
     }
 
     [HttpPost("register")]
@@ -56,25 +60,30 @@ public class AuthController : ControllerBase
         return Ok(new { Token = token });
     }
 
-    private string GenerateJwtToken(AppUser user)
+private string GenerateJwtToken(AppUser user)
+{
+    if (_jwtSettings == null)
     {
-        var claims = new[]
-        {
-            new Claim(JwtRegisteredClaimNames.Sub, user.Id),
-            new Claim(JwtRegisteredClaimNames.Email, user.Email!),
-            new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString())
-        };
-
-        var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_jwtSettings.Secret));
-        var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
-
-        var token = new JwtSecurityToken(
-            issuer: _jwtSettings.Issuer,
-            audience: _jwtSettings.Audience,
-            claims: claims,
-            expires: DateTime.Now.AddMinutes(_jwtSettings.ExpiryMinutes),
-            signingCredentials: creds);
-
-        return new JwtSecurityTokenHandler().WriteToken(token);
+        throw new InvalidOperationException("JwtSettings configuration is missing.");
     }
+
+    var claims = new[]
+    {
+        new Claim(JwtRegisteredClaimNames.Sub, user.Id),
+        new Claim(JwtRegisteredClaimNames.Email, user.Email!),
+        new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString())
+    };
+
+    var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_jwtSettings.Secret));
+    var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
+
+    var token = new JwtSecurityToken(
+        issuer: _jwtSettings.Issuer,
+        audience: _jwtSettings.Audience,
+        claims: claims,
+        expires: DateTime.Now.AddMinutes(_jwtSettings.ExpiryMinutes),
+        signingCredentials: creds);
+
+    return new JwtSecurityTokenHandler().WriteToken(token);
+}
 }

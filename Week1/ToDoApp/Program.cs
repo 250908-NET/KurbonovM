@@ -1,54 +1,67 @@
-using System;
-using Serilog;
 
+using Swashbuckle.AspNetCore.SwaggerGen;
+using Swashbuckle.AspNetCore.Swagger;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
+using System.Text;
 
-namespace ToDoApp
+var builder = WebApplication.CreateBuilder(args);
+
+// Add services to the container.
+builder.Services.AddControllers();
+builder.Services.AddEndpointsApiExplorer();
+builder.Services.AddSwaggerGen();
+
+builder.Services.AddDbContext<ApplicationDbContext>(options =>
+    options.UseSqlite("Data Source=TodoAppDb.db"));
+
+builder.Services.AddIdentity<AppUser, IdentityRole>()
+    .AddEntityFrameworkStores<ApplicationDbContext>()
+    .AddDefaultTokenProviders();
+
+var jwtSettings = builder.Configuration.GetSection("JwtSettings").Get<JwtSettings>();
+if (jwtSettings == null)
 {
-    class Program
-    {
-        static void Main(string[] args)
-        {
-            // Serilog - popular logging library for .NET
-            // dotnet add <project.csproj> package <package_name>
-            // dotnet add ToDoApp.csproj package Serilog.AspNetCore
-
-            // logging sinks - where the logs go
-            // console, file, database, remote server, etc.
-
-            var builder = WebApplication.CreateBuilder(args); // Create a builder for the web application
-
-            // configure logging before we "build" the app
-            // dotnet add package Serilog.sink.console
-            Log.Logger = new LoggerConfiguration().WriteTo.Console().CreateLogger();
-            builder.Host.UseSerilog(); // Use Serilog for logging
-
-
-            var app = builder.Build(); // Build the web application
-            app.MapGet("/", (ILogger<Program> logger) =>
-            {
-                logger.LogInformation("Hello World endpoint was called"); // Log an information message
-                return "Hello, World!"; // Return a simple response 
-            });
-
-
-            // HTTP requests - response have body, and headers
-            // HEAD  request is like GET but it does not have body
-            // HEAD, OPTIONS, DELETE requests do not have body
-
-            app.Run(); // Run the web application
-
-
-            // LOGGING - record the function/activity/behaviors/events of an application
-            // events - requests, responses, system/application status, errors, wornings, crashes/shutdown, startup
-            // levels of logging: 
-            // Trace - most detailed level, used for diagnosing issues - everything that happens!
-            // Debug - less detailed than Trace, used for debugging purposes
-            // Information - general information about the application's operation
-            // ----- this is the last "everything is ok" level -----
-            // Warning - indicates a potential issue or unexpected behavior
-            // Error - indicates a significant issue that affects the application's functionality
-            // Critical - indicates a severe issue that requires immediate attention
-
-        }
-    }
+    throw new InvalidOperationException("JwtSettings configuration is missing.");
 }
+builder.Services.AddSingleton(jwtSettings);
+
+builder.Services.AddAuthentication(options =>
+{
+    options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+    options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+})
+.AddJwtBearer(options =>
+{
+    options.TokenValidationParameters = new TokenValidationParameters
+    {
+        ValidateIssuer = true,
+        ValidateAudience = true,
+        ValidateLifetime = true,
+        ValidateIssuerSigningKey = true,
+        ValidIssuer = jwtSettings.Issuer,
+        ValidAudience = jwtSettings.Audience,
+        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtSettings.Secret))
+    };
+});
+
+builder.Services.AddAuthorization();
+builder.Services.AddHttpContextAccessor();
+
+var app = builder.Build();
+
+// Configure the HTTP request pipeline.
+if (app.Environment.IsDevelopment())
+{
+    app.UseSwagger();
+    app.UseSwaggerUI();
+}
+
+app.UseHttpsRedirection();
+app.UseAuthentication();
+app.UseAuthorization();
+app.MapControllers();
+
+app.Run();
