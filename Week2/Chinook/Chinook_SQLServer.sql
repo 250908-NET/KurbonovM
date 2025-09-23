@@ -7,10 +7,10 @@
    Author: Luis Rocha
    License: http://www.codeplex.com/ChinookDatabase/license
 ********************************************************************************/
-CREATE DATABASE MyDatabase;
+CREATE DATABASE TestDB;
 GO
 
-USE MyDatabase;
+USE TestDB;
 
 /*******************************************************************************
    Create Tables

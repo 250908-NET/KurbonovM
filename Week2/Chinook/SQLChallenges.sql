@@ -1,6 +1,6 @@
 -- SETUP:
     -- Create a database server (docker)
-        -- docker run -e "ACCEPT_EULA=Y" -e "MSSQL_SA_PASSWORD=YourNewStr0ngP@ssw0rd!" -p 1434:1433 --name sqlserver_instance -d mcr.microsoft.com/mssql/server:2022-latest
+        -- docker run -e "ACCEPT_EULA=Y" -e "MSSQL_SA_PASSWORD=YourNewStr0ngP@ssw0rd!" -p 1433:1433 --name sqlserver_instance -d mcr.microsoft.com/mssql/server:2022-latest
     -- Connect to the server (Azure Data Studio / Database extension)
     -- Test your connection with a simple query (like a select)
     -- Execute the Chinook database (to create Chinook resources in your db)
