@@ -24,6 +24,7 @@ packages/
 .local/
 .vs/
 .vs-code/
+.vscode/
 
 ## ReSharper and other extensions
 _ReSharper*/
