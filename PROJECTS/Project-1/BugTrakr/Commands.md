@@ -8,6 +8,8 @@
 - dotnet add package Microsoft.EntityFrameworkCore.Design
 - dotnet add package Microsoft.EntityFrameworkCore.SqlServer
 - dotnet add package Microsoft.AspNetCore.Mvc.Testing
+- dotnet add package xunit
+- dotnet add package Moq
 
 ## tool install for dotnet
 - dotnet add package Swashbuckle.AspNetCore
