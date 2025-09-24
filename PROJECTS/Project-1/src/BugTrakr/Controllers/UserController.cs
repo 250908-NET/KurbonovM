@@ -7,10 +7,10 @@ namespace BugTrakr.Controllers;
 
 [ApiController]
 [Route("api/users")]
-public class UserService : ControllerBase
+public class UserController : ControllerBase
 {
     private readonly IUserService _userService;
-    public UserService(IUserService userService)
+    public UserController(IUserService userService)
     {
         _userService = userService;
     }
