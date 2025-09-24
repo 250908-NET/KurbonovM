@@ -3,7 +3,6 @@ using Microsoft.EntityFrameworkCore;
 using BugTrakr.Data;
 using BugTrakr.Repositories;
 using BugTrakr.Services;
-using BugTrakr.Models;
 using Serilog;
 
 Env.Load();
@@ -16,7 +15,7 @@ builder.Host.UseSerilog((context, services, configuration) => configuration
     .ReadFrom.Services(services)
     .Enrich.FromLogContext());
 
-builder.Services.AddControllers();
+builder.Services.AddControllers(); // register controllers
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 builder.Services.AddDbContext<BugTrakrDbContext>(options =>
@@ -28,7 +27,6 @@ var app = builder.Build();
 
 app.UseSerilogRequestLogging();
 
-// Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
@@ -37,22 +35,6 @@ if (app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 
-app.MapGet("/", () => "Welcome to BugTrakr API!");
-
-app.MapGet("/users", async (IUserService userService) =>
-{
-    var users = await userService.GetAllUsersAsync();
-    return Results.Ok(users);
-});
-app.MapPost("/users", async (User user, IUserService userService) =>
-{
-    await userService.AddUserAsync(user);
-    return Results.Created($"/users/{user.UserID}", user);
-});
-app.MapGet("/users/{id}", async (int id, IUserService userService) =>
-{
-    var user = await userService.GetUserByIdAsync(id);
-    return user is not null ? Results.Ok(user) : Results.NotFound();
-});
+app.MapControllers(); // map controller routes
 
 app.Run();
