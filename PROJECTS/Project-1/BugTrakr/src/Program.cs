@@ -1,9 +1,19 @@
-var builder = WebApplication.CreateBuilder(args);
+using DotNetEnv;
+using Microsoft.EntityFrameworkCore;
+using BugTrakr.Data;
+using BugTrakr.Models;
 
+Env.Load();
+var builder = WebApplication.CreateBuilder(args);
+var connectionString = Environment.GetEnvironmentVariable("DB_CONNECTION_STRING") 
+    ?? throw new InvalidOperationException("DB_CONNECTION_STRING is not set in environment variables.");
 
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
+
+builder.Services.AddDbContext<BugTrakrDbContext>(options =>
+    options.UseSqlServer(connectionString));
 
 var app = builder.Build();
 
