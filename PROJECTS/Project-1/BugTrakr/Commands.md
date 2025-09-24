@@ -10,6 +10,7 @@
 - dotnet add package Microsoft.AspNetCore.Mvc.Testing
 
 ## tool install for dotnet
+- dotnet add package Swashbuckle.AspNetCore
 - dotnet new tool-manifest
 - dotnet tool install --local dotnet -ef
 
