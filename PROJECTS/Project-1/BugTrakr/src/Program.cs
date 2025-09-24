@@ -1,7 +1,8 @@
 using DotNetEnv;
 using Microsoft.EntityFrameworkCore;
 using BugTrakr.Data;
-using BugTrakr.Models;
+using BugTrakr.Repositories;
+using BugTrakr.Services;
 using Serilog;
 
 Env.Load();
@@ -17,9 +18,10 @@ builder.Host.UseSerilog((context, services, configuration) => configuration
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
-
 builder.Services.AddDbContext<BugTrakrDbContext>(options =>
     options.UseSqlServer(connectionString));
+builder.Services.AddScoped<IUserRepository, UserRepository>();
+builder.Services.AddScoped<IUserService, UserService>();
 
 var app = builder.Build();
 
