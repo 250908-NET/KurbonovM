@@ -9,7 +9,7 @@ public class BugTrakrDbContext : DbContext
     {
     }
 
-    public DbSet<User> Users { get; set; }
+    public required DbSet<User> Users { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
