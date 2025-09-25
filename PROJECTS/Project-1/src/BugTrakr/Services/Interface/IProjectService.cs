@@ -9,4 +9,7 @@ public interface IProjectService
     Task AddProjectAsync(Project project);
     Task UpdateProjectAsync(Project project);
     Task DeleteProjectAsync(int id);
+
+    // Adds a user as a member to a project.
+    Task<ProjectMember> AddMemberToProjectAsync(int projectId, int userId);
 }

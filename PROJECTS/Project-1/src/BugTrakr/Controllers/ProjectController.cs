@@ -1,4 +1,5 @@
-using Microsoft.EntityFrameworkCore;
+using BugTrakr.DTOs;
+using BugTrakr.Exceptions;
 using BugTrakr.Models;
 using BugTrakr.Services;
 using Microsoft.AspNetCore.Mvc;
@@ -59,4 +60,26 @@ public class ProjectController : ControllerBase
         await _projectService.DeleteProjectAsync(id);
         return NoContent();
     }
+
+    /// <summary>
+        /// Adds a new member to a project.
+        /// </summary>
+        /// <param name="dto">The DTO containing the project and user IDs.</param>
+        [HttpPost("add-member")]
+        public async Task<IActionResult> AddMemberToProject([FromBody] AddMemberDto dto)
+        {
+            try
+            {
+                var projectMember = await _projectService.AddMemberToProjectAsync(dto.ProjectID, dto.UserID);
+                return Ok(projectMember);
+            }
+            catch (NotFoundException ex)
+            {
+                return NotFound(ex.Message);
+            }
+            catch (InvalidOperationException ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
 }

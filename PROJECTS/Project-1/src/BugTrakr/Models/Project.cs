@@ -1,7 +1,7 @@
 using System;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-using System.Collections.Generic;
+using System.Text.Json.Serialization;
 
 namespace BugTrakr.Models;
 
@@ -19,8 +19,8 @@ public class Project
     public string? Description { get; set; }
 
     public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
-
+    [JsonIgnore]
     public ICollection<Ticket> Tickets { get; set; } = new List<Ticket>();
-
+    [JsonIgnore]
     public ICollection<ProjectMember> ProjectMembers { get; set; } = new List<ProjectMember>();
 }

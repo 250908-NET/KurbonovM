@@ -1,0 +1,14 @@
+using System;
+
+namespace BugTrakr.Exceptions
+{
+    /// <summary>
+    /// Custom exception for when a requested resource is not found.
+    /// </summary>
+    public class NotFoundException : Exception
+    {
+        public NotFoundException(string message) : base(message)
+        {
+        }
+    }
+}

@@ -1,6 +1,7 @@
 
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using System.Text.Json.Serialization;
 
 namespace BugTrakr.Models;
 
@@ -34,7 +35,10 @@ public class User
     [StringLength(255)]
     public required string PasswordSalt { get; set; }
     public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
+    [JsonIgnore]
     public ICollection<Ticket> ReportedTickets { get; set; } = new List<Ticket>();
+    [JsonIgnore]
     public ICollection<Ticket> AssignedTickets { get; set; } = new List<Ticket>();
+    [JsonIgnore]
     public ICollection<ProjectMember> ProjectMemberships { get; set; } = new List<ProjectMember>();
 }

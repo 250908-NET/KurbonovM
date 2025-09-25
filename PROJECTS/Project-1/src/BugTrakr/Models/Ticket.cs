@@ -2,6 +2,7 @@ using System;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Collections.Generic;
+using System.Text.Json.Serialization;
 
 namespace BugTrakr.Models;
 
@@ -13,6 +14,7 @@ public class Ticket
     public int TicketID { get; set; }
 
     public int ProjectID { get; set; }
+    [JsonIgnore]
     public Project Project { get; set; } = null!;
 
     [Required]
@@ -25,9 +27,11 @@ public class Ticket
     public string Status { get; set; } = string.Empty;
 
     public int ReporterID { get; set; }
+    [JsonIgnore]
     public User Reporter { get; set; } = null!;
 
     public int? AssigneeID { get; set; }
+    [JsonIgnore]
     public User? Assignee { get; set; }
 
     public DateTime CreatedAt { get; set; } = DateTime.UtcNow;

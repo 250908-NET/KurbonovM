@@ -20,15 +20,20 @@ builder.Host.UseSerilog((context, services, configuration) => configuration
 
 builder.Services.AddControllers(); // register controllers
 
+// Configure Entity Framework and SQL Server
 builder.Services.AddDbContext<BugTrakrDbContext>(options =>
     options.UseSqlServer(connectionString));
 
+// Register repositories and services
 builder.Services.AddScoped<IUserRepository, UserRepository>();
 builder.Services.AddScoped<IProjectRepository, ProjectRepository>();
+builder.Services.AddScoped<ITicketRepository, TicketRepository>();
+builder.Services.AddScoped<IProjectMemberRepository, ProjectMemberRepository>();
 
 
 builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped<IProjectService, ProjectService>();
+builder.Services.AddScoped<ITicketService, TicketService>();
 
 
 builder.Services.AddScoped<IAuthService, AuthService>();
