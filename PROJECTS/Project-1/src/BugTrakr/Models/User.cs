@@ -33,6 +33,8 @@ public class User
     [Required]
     [StringLength(255)]
     public required string PasswordSalt { get; set; }
-    
     public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
+    public ICollection<Ticket> ReportedTickets { get; set; } = new List<Ticket>();
+    public ICollection<Ticket> AssignedTickets { get; set; } = new List<Ticket>();
+    public ICollection<ProjectMember> ProjectMembers { get; set; } = new List<ProjectMember>();
 }
