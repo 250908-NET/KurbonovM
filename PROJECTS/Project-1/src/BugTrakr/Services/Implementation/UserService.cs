@@ -2,8 +2,7 @@ using BugTrakr.Models;
 using BugTrakr.Repositories;
 
 
-namespace BugTrakr.Services
-{
+namespace BugTrakr.Services;
     public class UserService : IUserService
     {
         private readonly IUserRepository _userRepo;
@@ -41,4 +40,3 @@ namespace BugTrakr.Services
         }
     }
         
-}

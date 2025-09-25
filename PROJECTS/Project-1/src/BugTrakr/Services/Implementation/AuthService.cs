@@ -6,8 +6,7 @@ using BugTrakr.Models;
 using BugTrakr.DTOs;
 using BugTrakr.Repositories;
 
-namespace BugTrakr.Services
-{
+namespace BugTrakr.Services;
     public class AuthService : IAuthService
     {
         private readonly IUserRepository _userRepository;
@@ -100,4 +99,3 @@ namespace BugTrakr.Services
             return tokenHandler.WriteToken(token);
         }
     }
-}
