@@ -7,8 +7,9 @@ namespace BugTrakr.Repositories
 
         Task<User?> GetUserByIdAsync(int id);
         Task<User?> GetUserByUsernameAsync(string username);
+        Task<User?> GetUserByEmailAsync(string email);
         Task<IEnumerable<User>> GetAllUsersAsync();
-        Task AddUserAsync(User user);
+        Task<User> AddUserAsync(User user);
         Task UpdateUserAsync(User user);
         Task DeleteUserAsync(int id);
         Task SaveChangesAsync();

@@ -22,7 +22,7 @@ public class UserController : ControllerBase
         return Ok(users);
     }
     [HttpPost]
-    public async Task<IActionResult> CreateUser(User user)
+    public async Task<IActionResult> CreateUser([FromBody] User user)
     {
         await _userService.AddUserAsync(user);
         return Created($"/users/{user.UserID}", user);
