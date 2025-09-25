@@ -2,9 +2,11 @@ using Microsoft.EntityFrameworkCore;
 using BugTrakr.Models;
 using BugTrakr.Services;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Authorization;
 
 namespace BugTrakr.Controllers;
 
+[Authorize]
 [ApiController]
 [Route("api/users")]
 public class UserController : ControllerBase
@@ -21,12 +23,12 @@ public class UserController : ControllerBase
         var users = await _userService.GetAllUsersAsync();
         return Ok(users);
     }
-    [HttpPost]
-    public async Task<IActionResult> CreateUser([FromBody] User user)
-    {
-        await _userService.AddUserAsync(user);
-        return Created($"/users/{user.UserID}", user);
-    }
+    // [HttpPost]
+    // public async Task<IActionResult> CreateUser([FromBody] User user)
+    // {
+    //     await _userService.AddUserAsync(user);
+    //     return Created($"/users/{user.UserID}", user);
+    // }
     [HttpGet("{id}")]
     public async Task<IActionResult> GetUserById(int id)
     {

@@ -4,9 +4,11 @@ using BugTrakr.Services;
 using BugTrakr.DTOs;
 using BugTrakr.Exceptions;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Authorization;
 
 namespace BugTrakr.Controllers;
 
+[Authorize]
 [ApiController]
 [Route("api/tickets")]
 public class TicketController : ControllerBase

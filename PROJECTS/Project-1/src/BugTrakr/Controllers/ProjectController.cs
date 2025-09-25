@@ -2,10 +2,12 @@ using BugTrakr.DTOs;
 using BugTrakr.Exceptions;
 using BugTrakr.Models;
 using BugTrakr.Services;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace BugTrakr.Controllers;
 
+[Authorize]
 [ApiController]
 [Route("api/projects")]
 public class ProjectController : ControllerBase

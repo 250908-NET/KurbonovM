@@ -54,21 +54,19 @@ namespace BugTrakr.Services;
 
         private void CreatePasswordHash(string password, out string passwordHash, out string passwordSalt)
         {
-            // Implementation...
             using (var hmac = new System.Security.Cryptography.HMACSHA512())
             {
                 passwordSalt = Convert.ToBase64String(hmac.Key);
-                passwordHash = Convert.ToBase64String(hmac.ComputeHash(System.Text.Encoding.UTF8.GetBytes(password)));
+                passwordHash = Convert.ToBase64String(hmac.ComputeHash(Encoding.UTF8.GetBytes(password)));
             }
         }
 
         private bool VerifyPasswordHash(string password, string storedHash, string storedSalt)
         {
-            // Implementation...
             var saltBytes = Convert.FromBase64String(storedSalt);
             using (var hmac = new System.Security.Cryptography.HMACSHA512(saltBytes))
             {
-                var computedHash = hmac.ComputeHash(System.Text.Encoding.UTF8.GetBytes(password));
+                var computedHash = hmac.ComputeHash(Encoding.UTF8.GetBytes(password));
                 var storedHashBytes = Convert.FromBase64String(storedHash);
                 return computedHash.SequenceEqual(storedHashBytes);
             }
@@ -77,21 +75,21 @@ namespace BugTrakr.Services;
         private string GenerateJwtToken(User user)
         {
             var tokenHandler = new JwtSecurityTokenHandler();
-            var key = Encoding.ASCII.GetBytes(_configuration["JWT:Secret"] ?? string.Empty);
+            var secret = _configuration["JWT:Secret"] ?? throw new InvalidOperationException("JWT Secret is not configured.");
+            var key = Encoding.ASCII.GetBytes(secret);
 
-            if (string.IsNullOrEmpty(_configuration["JWT:Secret"]))
+            var claims = new ClaimsIdentity(new[]
             {
-                throw new InvalidOperationException("JWT Secret is not configured.");
-            }
+                new Claim(ClaimTypes.NameIdentifier, user.UserID.ToString()),
+                new Claim(ClaimTypes.Name, user.Username)
+            });
 
             var tokenDescriptor = new SecurityTokenDescriptor
             {
-                Subject = new ClaimsIdentity(new[]
-                {
-                    new Claim(ClaimTypes.NameIdentifier, user.UserID.ToString()),
-                    new Claim(ClaimTypes.Name, user.Username)
-                }),
+                Subject = claims,
                 Expires = DateTime.UtcNow.AddDays(7),
+                Issuer = _configuration["JWT:Issuer"],
+                Audience = _configuration["JWT:Audience"],
                 SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature)
             };
 
