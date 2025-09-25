@@ -26,13 +26,14 @@ namespace BugTrakr.Repositories
         public async Task<Ticket> AddTicketAsync(Ticket ticket)
         {
             await _context.Tickets.AddAsync(ticket);
-            await _context.SaveChangesAsync();
+            await SaveChangesAsync();
             return ticket;
         }
 
         public async Task UpdateTicketAsync(Ticket ticket)
         {
             _context.Tickets.Update(ticket);
+            await SaveChangesAsync();
         }
 
         public async Task DeleteTicketAsync(int id)

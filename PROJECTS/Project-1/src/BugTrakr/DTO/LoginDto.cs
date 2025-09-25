@@ -1,4 +1,3 @@
-// File: YourProject.Api/Models/DTOs/LoginDto.cs
 
 using System.ComponentModel.DataAnnotations;
 

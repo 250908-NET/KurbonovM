@@ -2,6 +2,7 @@ using BugTrakr.Models;
 using BugTrakr.Repositories;
 using BugTrakr.Services;
 using BugTrakr.Exceptions;
+using BugTrakr.DTOs;
 
 namespace BugTrakr.Services;
 
@@ -24,11 +25,32 @@ public class ProjectService : IProjectService
         await _projectRepository.SaveChangesAsync();
     }
 
-    public async Task<IEnumerable<Project>> GetAllProjectsAsync()
+    public async Task<IEnumerable<ProjectDto>> GetAllProjectsAsync()
     {
-        return await _projectRepository.GetAllProjectsAsync();
-    }
+        // 1. Get the data from the repository.
+        var projects = await _projectRepository.GetAllProjectsWithDetailsAsync();
 
+        // 2. Map the entities to DTOs.
+        return projects.Select(p => new ProjectDto
+        {
+            ProjectID = p.ProjectID,
+            Name = p.Name,
+            Description = p.Description,
+            CreatedAt = p.CreatedAt,
+            Tickets = p.Tickets.Select(t => new TicketDto
+            {
+                TicketID = t.TicketID,
+                Title = t.Title,
+                Status = t.Status,
+                ReporterID = t.ReporterID,
+                AssigneeID = t.AssigneeID
+            }).ToList(),
+            ProjectMembers = p.ProjectMembers.Select(pm => new ProjectMemberDto
+            {
+                UserID = pm.UserID
+            }).ToList()
+        }).ToList();
+    }
     public async Task<Project?> GetProjectByIdAsync(int id)
     {
         return await _projectRepository.GetProjectByIdAsync(id);
@@ -46,39 +68,35 @@ public class ProjectService : IProjectService
         await _projectRepository.SaveChangesAsync();
     }
 
-    /// <summary>
-        /// Adds a user as a member to a project.
-        /// </summary>
-        /// <param name="projectId">The ID of the project.</param>
-        /// <param name="userId">The ID of the user to add.</param>
-        /// <returns>The newly created ProjectMember entity.</returns>
-        public async Task<ProjectMember> AddMemberToProjectAsync(int projectId, int userId)
+
+    // Adds a user as a member to a project.
+    public async Task<ProjectMember> AddMemberToProjectAsync(int projectId, int userId)
+    {
+        var project = await _projectRepository.GetProjectByIdAsync(projectId);
+        if (project == null)
         {
-            var project = await _projectRepository.GetProjectByIdAsync(projectId);
-            if (project == null)
-            {
-                throw new NotFoundException($"Project with ID {projectId} not found.");
-            }
-
-            var user = await _userRepository.GetUserByIdAsync(userId);
-            if (user == null)
-            {
-                throw new NotFoundException($"User with ID {userId} not found.");
-            }
-
-            if (await _projectMemberRepository.IsMemberAsync(projectId, userId))
-            {
-                throw new InvalidOperationException($"User {user.Username} is already a member of project {project.Name}.");
-            }
-
-            var projectMember = new ProjectMember
-            {
-                ProjectID = projectId,
-                UserID = userId
-            };
-
-            await _projectMemberRepository.AddMemberAsync(projectMember);
-            return projectMember;
+            throw new NotFoundException($"Project with ID {projectId} not found.");
         }
+
+        var user = await _userRepository.GetUserByIdAsync(userId);
+        if (user == null)
+        {
+            throw new NotFoundException($"User with ID {userId} not found.");
+        }
+
+        if (await _projectMemberRepository.IsMemberAsync(projectId, userId))
+        {
+            throw new InvalidOperationException($"User {user.Username} is already a member of project {project.Name}.");
+        }
+
+        var projectMember = new ProjectMember
+        {
+            ProjectID = projectId,
+            UserID = userId
+        };
+
+        await _projectMemberRepository.AddMemberAsync(projectMember);
+        return projectMember;
+    }
     
 }

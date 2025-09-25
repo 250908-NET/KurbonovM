@@ -19,7 +19,7 @@ namespace BugTrakr.Repositories
         public async Task<User> AddUserAsync(User user)
         {
             _context.Users.Add(user);
-            await _context.SaveChangesAsync();
+            await SaveChangesAsync();
             return user;
         }
 
@@ -38,6 +38,7 @@ namespace BugTrakr.Repositories
         public async Task UpdateUserAsync(User user)
         {
             _context.Users.Update(user);
+            await SaveChangesAsync();
         }
          public async Task DeleteUserAsync(int id)
         {

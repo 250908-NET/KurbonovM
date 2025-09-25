@@ -22,6 +22,8 @@ public class ProjectController : ControllerBase
         var projects = await _projectService.GetAllProjectsAsync();
         return Ok(projects);
     }
+
+
     [HttpPost]
     public async Task<IActionResult> CreateProject([FromBody] Project project)
     {

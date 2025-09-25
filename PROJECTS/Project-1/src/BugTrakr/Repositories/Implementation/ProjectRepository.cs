@@ -1,6 +1,7 @@
 using BugTrakr.Models;
 using BugTrakr.Data;
 using Microsoft.EntityFrameworkCore;
+using BugTrakr.DTOs;
 
 namespace BugTrakr.Repositories
 {
@@ -23,6 +24,16 @@ namespace BugTrakr.Repositories
             return await _context.Projects.ToListAsync();
         }
 
+        public async Task<IEnumerable<Project>> GetAllProjectsWithDetailsAsync()
+        {
+            // The .Include() method tells Entity Framework to load the related data
+            // in a single, efficient query.
+            return await _context.Projects
+                .Include(p => p.Tickets)
+                .Include(p => p.ProjectMembers)
+                .ToListAsync();
+        }
+
         public async Task AddProjectAsync(Project project)
         {
             await _context.Projects.AddAsync(project);
@@ -31,6 +42,7 @@ namespace BugTrakr.Repositories
         public async Task UpdateProjectAsync(Project project)
         {
             _context.Projects.Update(project);
+            await SaveChangesAsync();
         }
 
         public async Task DeleteProjectAsync(int id)
