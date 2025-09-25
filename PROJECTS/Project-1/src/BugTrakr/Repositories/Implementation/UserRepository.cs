@@ -31,7 +31,6 @@ namespace BugTrakr.Repositories
         public async Task UpdateUserAsync(User user)
         {
             _context.Users.Update(user);
-            await SaveChangesAsync();
         }
          public async Task DeleteUserAsync(int id)
         {
@@ -39,7 +38,6 @@ namespace BugTrakr.Repositories
             if (user != null)
             {
                 _context.Users.Remove(user);
-                await SaveChangesAsync();
             }
         }
         public async Task SaveChangesAsync()

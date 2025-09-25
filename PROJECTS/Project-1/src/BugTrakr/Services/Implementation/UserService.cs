@@ -32,10 +32,12 @@ namespace BugTrakr.Services
         public async Task UpdateUserAsync(User user)
         {
             await _userRepo.UpdateUserAsync(user);
+            await _userRepo.SaveChangesAsync();
         }
-         public async Task DeleteUserAsync(int id)
+        public async Task DeleteUserAsync(int id)
         {
             await _userRepo.DeleteUserAsync(id);
+            await _userRepo.SaveChangesAsync();
         }
     }
         
