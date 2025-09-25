@@ -2,7 +2,7 @@ using Microsoft.AspNetCore.Mvc;
 using BugTrakr.DTOs;
 using BugTrakr.Services;
 
-namespace YourProject.Api.Controllers
+namespace BugTrakr.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
