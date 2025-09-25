@@ -36,5 +36,5 @@ public class User
     public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
     public ICollection<Ticket> ReportedTickets { get; set; } = new List<Ticket>();
     public ICollection<Ticket> AssignedTickets { get; set; } = new List<Ticket>();
-    public ICollection<ProjectMember> ProjectMembers { get; set; } = new List<ProjectMember>();
+    public ICollection<ProjectMember> ProjectMemberships { get; set; } = new List<ProjectMember>();
 }
