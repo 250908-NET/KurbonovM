@@ -9,7 +9,7 @@ using BugTrakr.Services;
 using Moq;
 using Xunit;
 
-namespace BugTrakr.Services.Tests
+namespace BugTrakr.Tests.Services
 {
     public class TicketServiceTests
     {
