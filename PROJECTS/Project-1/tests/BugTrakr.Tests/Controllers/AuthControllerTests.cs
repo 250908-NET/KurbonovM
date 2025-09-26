@@ -40,7 +40,7 @@ public class AuthControllerTests
         // Assert
         var okResult = Assert.IsType<OkObjectResult>(result);
         Assert.Equal(200, okResult.StatusCode);
-        Assert.Contains("Registration successful", okResult.Value.ToString());
+        Assert.Contains("Registration successful", okResult.Value?.ToString());
     }
 
     [Fact]
@@ -77,7 +77,7 @@ public class AuthControllerTests
         Assert.Equal(200, okResult.StatusCode);
         
         var value = okResult.Value;
-        var tokenValue = value.GetType().GetProperty("Token")?.GetValue(value, null);
+        var tokenValue = value?.GetType().GetProperty("Token")?.GetValue(value, null);
 
         Assert.Equal(fakeToken, tokenValue);
     }

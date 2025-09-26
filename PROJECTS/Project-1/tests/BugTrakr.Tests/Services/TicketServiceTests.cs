@@ -99,7 +99,7 @@ namespace BugTrakr.Tests.Services
                 Description = "desc"
             };
 
-            _mockProjectRepository.Setup(r => r.GetProjectByIdAsync(99)).ReturnsAsync((Project)null);
+            _mockProjectRepository.Setup(r => r.GetProjectByIdAsync(99)).ReturnsAsync((Project?)null);
 
             await Assert.ThrowsAsync<NotFoundException>(() => _service.CreateTicketAsync(ticketDto));
         }
@@ -116,7 +116,7 @@ namespace BugTrakr.Tests.Services
             };
 
             _mockProjectRepository.Setup(r => r.GetProjectByIdAsync(1)).ReturnsAsync(new Project());
-            _mockUserRepository.Setup(r => r.GetUserByIdAsync(99)).ReturnsAsync((User)null);
+            _mockUserRepository.Setup(r => r.GetUserByIdAsync(99)).ReturnsAsync((User?)null);
 
             await Assert.ThrowsAsync<NotFoundException>(() => _service.CreateTicketAsync(ticketDto));
         }
@@ -145,7 +145,7 @@ namespace BugTrakr.Tests.Services
 
             _mockProjectRepository.Setup(r => r.GetProjectByIdAsync(1)).ReturnsAsync(new Project());
             _mockUserRepository.Setup(r => r.GetUserByIdAsync(2)).ReturnsAsync(testUser);
-            _mockUserRepository.Setup(r => r.GetUserByIdAsync(99)).ReturnsAsync((User)null);
+            _mockUserRepository.Setup(r => r.GetUserByIdAsync(99)).ReturnsAsync((User?)null);
 
             await Assert.ThrowsAsync<NotFoundException>(() => _service.CreateTicketAsync(ticketDto));
         }

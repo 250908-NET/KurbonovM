@@ -73,7 +73,7 @@ public class ProjectControllerTests
     public async Task GetProjectById_ProjectDoesNotExist_ReturnsNotFound()
     {
         // Arrange
-        _mockProjectService.Setup(s => s.GetProjectByIdAsync(99)).ReturnsAsync((Project)null);
+        _mockProjectService.Setup(s => s.GetProjectByIdAsync(99)).ReturnsAsync((Project?)null);
 
         // Act
         var result = await _controller.GetProjectById(99);
@@ -105,7 +105,7 @@ public class ProjectControllerTests
     public async Task UpdateProject_ProjectDoesNotExist_ReturnsNotFound()
     {
         // Arrange
-        _mockProjectService.Setup(s => s.GetProjectByIdAsync(99)).ReturnsAsync((Project)null);
+        _mockProjectService.Setup(s => s.GetProjectByIdAsync(99)).ReturnsAsync((Project?)null);
 
         // Act
         var result = await _controller.UpdateProject(99, new Project());
@@ -133,7 +133,7 @@ public class ProjectControllerTests
     public async Task DeleteProject_ProjectDoesNotExist_ReturnsNotFound()
     {
         // Arrange
-        _mockProjectService.Setup(s => s.GetProjectByIdAsync(99)).ReturnsAsync((Project)null);
+        _mockProjectService.Setup(s => s.GetProjectByIdAsync(99)).ReturnsAsync((Project?)null);
 
         // Act
         var result = await _controller.DeleteProject(99);
