@@ -7,7 +7,7 @@ using BugTrakr.Services;
 using BugTrakr.Controllers;
 using System.Threading.Tasks;
 
-namespace BugTrakr.Controllers;
+namespace BugTrakr.Tests.Controllers;
 
 // This class contains all the unit tests for the AuthController.
 public class AuthControllerTests
@@ -25,7 +25,7 @@ public class AuthControllerTests
     }
 
     [Fact]
-    public async Task Register_Returns_Ok_On_Success()
+    public async Task Register_Returns_Ok_WhenUserCreated()
     {
         // Arrange
         var registerDto = new RegisterDto { Username = "newuser", Email = "new@example.com", Password = "password", FirstName = "New", LastName = "User" };
@@ -38,7 +38,9 @@ public class AuthControllerTests
         var result = await _controller.Register(registerDto);
 
         // Assert
-        Assert.IsType<OkObjectResult>(result);
+        var okResult = Assert.IsType<OkObjectResult>(result);
+        Assert.Equal(200, okResult.StatusCode);
+        Assert.Contains("Registration successful", okResult.Value.ToString());
     }
 
     [Fact]
@@ -53,26 +55,32 @@ public class AuthControllerTests
         var result = await _controller.Register(registerDto);
 
         // Assert
-        Assert.IsType<BadRequestObjectResult>(result);
+        var badRequestResult = Assert.IsType<BadRequestObjectResult>(result);
+        Assert.Equal(400, badRequestResult.StatusCode);
+        Assert.Equal("Username already exists.", badRequestResult.Value);
     }
 
-    // [Fact]
-    // public async Task Login_Returns_Ok_With_Token_On_Success()
-    // {
-    //     // Arrange
-    //     var loginDto = new LoginDto { Username = "validuser", Password = "password" };
-    //     var fakeToken = "this-is-a-fake-jwt-token";
-    //     _mockAuthService.Setup(service => service.LoginAsync(loginDto.Username, loginDto.Password))
-    //         .ReturnsAsync(fakeToken);
+    [Fact]
+    public async Task Login_Returns_Ok_With_Token_WhenCredentialsValid()
+    {
+        // Arrange
+        var loginDto = new LoginDto { Username = "validuser", Password = "password" };
+        var fakeToken = "this-is-a-fake-jwt-token";
+        _mockAuthService.Setup(service => service.LoginAsync(loginDto.Username, loginDto.Password))
+            .ReturnsAsync(fakeToken);
 
-    //     // Act
-    //     var result = await _controller.Login(loginDto);
+        // Act
+        var result = await _controller.Login(loginDto);
 
-    //     // Assert
-    //     var okResult = Assert.IsType<OkObjectResult>(result);
-    //     dynamic returnedObject = okResult.Value;
-    //     Assert.Equal(fakeToken, returnedObject.Token);
-    // }
+        // Assert
+        var okResult = Assert.IsType<OkObjectResult>(result);
+        Assert.Equal(200, okResult.StatusCode);
+        
+        var value = okResult.Value;
+        var tokenValue = value.GetType().GetProperty("Token")?.GetValue(value, null);
+
+        Assert.Equal(fakeToken, tokenValue);
+    }
 
     [Fact]
     public async Task Login_Returns_Unauthorized_For_Invalid_Credentials()
@@ -86,6 +94,8 @@ public class AuthControllerTests
         var result = await _controller.Login(loginDto);
 
         // Assert
-        Assert.IsType<UnauthorizedObjectResult>(result);
+        var unauthorizedResult = Assert.IsType<UnauthorizedObjectResult>(result);
+        Assert.Equal(401, unauthorizedResult.StatusCode);
+        Assert.Equal("Invalid username or password.", unauthorizedResult.Value);
     }
 }

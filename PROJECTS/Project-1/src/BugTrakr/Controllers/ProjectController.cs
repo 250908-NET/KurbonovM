@@ -65,25 +65,22 @@ public class ProjectController : ControllerBase
         return NoContent();
     }
 
-    /// <summary>
-        /// Adds a new member to a project.
-        /// </summary>
-        /// <param name="dto">The DTO containing the project and user IDs.</param>
-        [HttpPost("add-member")]
-        public async Task<IActionResult> AddMemberToProject([FromBody] AddMemberDto dto)
+    // Adds a new member to a project.
+    [HttpPost("add-member")]
+    public async Task<IActionResult> AddMemberToProject([FromBody] AddMemberDto dto)
+    {
+        try
         {
-            try
-            {
-                var projectMember = await _projectService.AddMemberToProjectAsync(dto.ProjectID, dto.UserID);
-                return Ok(projectMember);
-            }
-            catch (NotFoundException ex)
-            {
-                return NotFound(ex.Message);
-            }
-            catch (InvalidOperationException ex)
-            {
-                return BadRequest(ex.Message);
-            }
+            var projectMember = await _projectService.AddMemberToProjectAsync(dto.ProjectID, dto.UserID);
+            return Ok(projectMember);
         }
+        catch (NotFoundException ex)
+        {
+            return NotFound(ex.Message);
+        }
+        catch (InvalidOperationException ex)
+        {
+            return BadRequest(ex.Message);
+        }
+    }
 }

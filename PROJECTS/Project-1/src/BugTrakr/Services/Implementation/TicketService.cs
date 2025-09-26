@@ -20,57 +20,49 @@ public class TicketService : ITicketService
         _userRepository = userRepository;
     }
 
-    /// <summary>
-        /// Creates a new ticket from a DTO.
-        /// </summary>
-        public async Task<Ticket> CreateTicketAsync(CreateTicketDto ticketDto)
+        // Creates a new ticket from a DTO.
+    public async Task<Ticket> CreateTicketAsync(CreateTicketDto ticketDto)
+    {
+        // Fetch related entities from the database
+        var project = await _projectRepository.GetProjectByIdAsync(ticketDto.ProjectID);
+        if (project == null)
         {
-            // Fetch related entities from the database
-            var project = await _projectRepository.GetProjectByIdAsync(ticketDto.ProjectID);
-            if (project == null)
-            {
-                throw new NotFoundException($"Project with ID {ticketDto.ProjectID} not found.");
-            }
-
-            var reporter = await _userRepository.GetUserByIdAsync(ticketDto.ReporterID);
-            if (reporter == null)
-            {
-                throw new NotFoundException($"Reporter with ID {ticketDto.ReporterID} not found.");
-            }
-
-            User? assignee = null;
-            if (ticketDto.AssigneeID.HasValue)
-            {
-                assignee = await _userRepository.GetUserByIdAsync(ticketDto.AssigneeID.Value);
-                if (assignee == null)
-                {
-                    throw new NotFoundException($"Assignee with ID {ticketDto.AssigneeID.Value} not found.");
-                }
-            }
-            
-            // Build the full Ticket entity from the DTO and fetched entities
-            var ticket = new Ticket
-            {
-                ProjectID = ticketDto.ProjectID,
-                Project = project,
-                Title = ticketDto.Title,
-                Description = ticketDto.Description,
-                Status = ticketDto.Status,
-                ReporterID = ticketDto.ReporterID,
-                Reporter = reporter,
-                AssigneeID = ticketDto.AssigneeID,
-                Assignee = assignee
-            };
-
-            await _ticketRepository.AddTicketAsync(ticket);
-            return ticket;
+            throw new NotFoundException($"Project with ID {ticketDto.ProjectID} not found.");
         }
 
-    // public async Task AddTicketAsync(Ticket ticket)
-    // {
-    //     await _ticketRepository.AddTicketAsync(ticket);
-    //     await _ticketRepository.SaveChangesAsync();
-    // }
+        var reporter = await _userRepository.GetUserByIdAsync(ticketDto.ReporterID);
+        if (reporter == null)
+        {
+            throw new NotFoundException($"Reporter with ID {ticketDto.ReporterID} not found.");
+        }
+
+        User? assignee = null;
+        if (ticketDto.AssigneeID.HasValue)
+        {
+            assignee = await _userRepository.GetUserByIdAsync(ticketDto.AssigneeID.Value);
+            if (assignee == null)
+            {
+                throw new NotFoundException($"Assignee with ID {ticketDto.AssigneeID.Value} not found.");
+            }
+        }
+        
+        // Build the full Ticket entity from the DTO and fetched entities
+        var ticket = new Ticket
+        {
+            ProjectID = ticketDto.ProjectID,
+            Project = project,
+            Title = ticketDto.Title,
+            Description = ticketDto.Description,
+            Status = ticketDto.Status,
+            ReporterID = ticketDto.ReporterID,
+            Reporter = reporter,
+            AssigneeID = ticketDto.AssigneeID,
+            Assignee = assignee
+        };
+
+        await _ticketRepository.AddTicketAsync(ticket);
+        return ticket;
+    }
 
     public async Task<IEnumerable<Ticket>> GetAllTicketsAsync()
     {
