@@ -40,6 +40,13 @@ builder.Services.AddScoped<ITicketService, TicketService>();
 builder.Services.AddScoped<IAuthService, AuthService>();
 
 
+// Fix the null reference warnings by handling the null case for mandatory JWT configuration values.
+    var jwtSecret = builder.Configuration["JWT:Secret"] 
+        ?? throw new InvalidOperationException("JWT:Secret configuration value is missing.");
+    var jwtIssuer = builder.Configuration["JWT:Issuer"]
+        ?? throw new InvalidOperationException("JWT:Issuer configuration value is missing.");
+    var jwtAudience = builder.Configuration["JWT:Audience"]
+        ?? throw new InvalidOperationException("JWT:Audience configuration value is missing.");
 
 // Configure JWT Authentication
 // This section tells the app how to authenticate incoming requests.
@@ -56,9 +63,9 @@ builder.Services.AddAuthentication(options =>
         ValidateAudience = true,
         ValidateLifetime = true,
         ValidateIssuerSigningKey = true,
-        ValidIssuer = builder.Configuration["JWT:Issuer"], 
-        ValidAudience = builder.Configuration["JWT:Audience"], 
-        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["JWT:Secret"]))
+        ValidIssuer = jwtIssuer,
+        ValidAudience = jwtAudience,
+        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtSecret))
     };
 });
 
